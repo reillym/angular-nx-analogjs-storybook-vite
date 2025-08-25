@@ -1,0 +1,117 @@
+{
+  "name": "my-app",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "prefix": "app",
+  "sourceRoot": "apps/my-app/src",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@angular/build:application",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/my-app",
+        "browser": "apps/my-app/src/main.ts",
+        "polyfills": ["zone.js"],
+        "tsConfig": "apps/my-app/tsconfig.app.json",
+        "inlineStyleLanguage": "scss",
+        "assets": [
+          {
+            "glob": "**/*",
+            "input": "apps/my-app/public"
+          }
+        ],
+        "styles": ["apps/my-app/src/styles.scss"]
+      },
+      "configurations": {
+        "production": {
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "500kb",
+              "maximumError": "1mb"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "4kb",
+              "maximumError": "8kb"
+            }
+          ],
+          "outputHashing": "all"
+        },
+        "development": {
+          "optimization": false,
+          "extractLicenses": false,
+          "sourceMap": true
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "serve": {
+      "continuous": true,
+      "executor": "@angular/build:dev-server",
+      "configurations": {
+        "production": {
+          "buildTarget": "my-app:build:production"
+        },
+        "development": {
+          "buildTarget": "my-app:build:development"
+        }
+      },
+      "defaultConfiguration": "development"
+    },
+    "extract-i18n": {
+      "executor": "@angular/build:extract-i18n",
+      "options": {
+        "buildTarget": "my-app:build"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/vite:test",
+      "outputs": ["{options.reportsDirectory}"],
+      "options": {
+        "reportsDirectory": "../../coverage/apps/my-app"
+      }
+    },
+    "serve-static": {
+      "continuous": true,
+      "executor": "@nx/web:file-server",
+      "options": {
+        "buildTarget": "my-app:build",
+        "staticFilePath": "dist/apps/my-app/browser",
+        "spa": true
+      }
+    },
+    "build-storybook": {
+      "executor": "@analogjs/storybook-angular:build-storybook",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/storybook",
+        "configDir": "apps/my-app/.storybook",
+        "styles": ["apps/my-app/src/styles.scss"],
+        "stylePreprocessorOptions": {
+          "loadPaths": ["apps/my-app/src"]
+        },
+        "compodoc": false
+      }
+    },
+    "storybook": {
+      "executor": "@analogjs/storybook-angular:start-storybook",
+      "options": {
+        "port": 6006,
+        "configDir": "apps/my-app/.storybook",
+        "styles": ["apps/my-app/src/styles.scss"],
+        "stylePreprocessorOptions": {
+          "loadPaths": ["apps/my-app/src"]
+        },
+        "compodoc": false
+      }
+    },
+    "test-storybook": {
+      "executor": "@analogjs/vitest-angular:test"
+    }
+  }
+}
